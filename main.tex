@@ -13,6 +13,8 @@
 \usepackage{qcircuit}
 \usepackage{smartref}
 \usepackage{graphicx}
+\usepackage{tikz}
+\usetikzlibrary{topaths,calc}
 
 
 
@@ -49,6 +51,8 @@
 %%%%%%%%    OPERATOR DEFINITIONS FOR EASIER MATHS
 \DeclareMathOperator{\Tr}{Tr}
 \DeclareMathOperator{\Hom}{Hom}
+\DeclareMathOperator{\card}{card}
+\newcommand{\cardi}[1]{\card \parens{ #1 }}
 \newcommand{\trace}[1]{\Tr \brackets{ #1 }}
 \newcommand{\partrace}[2]{\Tr_{#1} \parens{ #2 }}
 
@@ -64,12 +68,12 @@
 \newtheorem{lemma}[theorem]{Lemma}
 \newtheorem{claim}[theorem]{Claim}
 \newtheorem{corollary}[theorem]{Corollary}
-\newtheorem{definition}{Definition}
+\newtheorem{defn}{Definition}
 % \DeclareMathOperator*{\dim}{dim}
 
 \newcommand\disjointUnion{\rotatebox[origin=c]{180}{$\prod$}}
 
-\title{Simplified Hypergraph Cuts and Walks via a Spectral Hypergraph Theory}
+\title{Properties of Hypergraphs}
 \author{Matthew Hagan}
 \date{\today}
 
@@ -79,26 +83,83 @@
 
 \maketitle
 \begin{abstract}
-	We propose a definition of hypergraphs that is amenable to clearly defined random walk processes and cuts resulting from higher-dimensional dynamics on $n$ nodes. By dimension, we are referring to the number of nodes that a dynamical process can act on at once. A standard linear process acts on 1-dimensional objects but 2-dimensional or arbitrary $k$-dimensional (up to $k=n$) dynamics are permissable. To illustrate the utility of this viewpoint of hypergraph dynamics we study the spectral properties resulting from cuts and random processes.
+	We propose new definitions that allow for the study of spectral properties of hypergraphs. We first study the vector spaces that directed, weighted hypergraphs act on as linear opertors. We then study the differences between the complete hypergraph as compared to a complete graph representation and show how this leads to a quantity we denote $\card(.)$.
+    We give a simple algorithm to output an estimate of $\card(H)$ for a hypergraph $H$ that satisfies a PAC-style bound.
 \end{abstract}
-\tableofcontents
+% \tableofcontents
 
 \section{Introduction}
+Hypergraphs are generally viewed as a generalization of graphs, so we first need to define graphs. A graph $G$ is typically viewed as two sets $G = (N, E)$, one set $N = \set{n_i}_{i=1}^n$ of nodes ($V$ is reserved for vector spaces later) and one set of edges $E = \set{(n_a, n_b, w_{a,b})}$, where $n_a$ represents the head node and $n_b$ the tail, if this edge is directed, and $w_{a,b} \in \field$ the weight. The field $\field$ is left arbitrary for now, all we require is that the edge weights be in a field so we can construct vector spaces later.
 
-Hypergraphs start with a notion of a set of nodes $N = \set{n_1, n_2, \ldots, n_m}$ and it's power set $2^N = \set{ \set{}, \set{n_i}, \set{n_i, n_j | n_i \neq n_j}, \ldots }$. It will serve useful to divide subsets of $N$ by the number of elements they contain, so let $N_k = \set{x_1, x_2, \ldots x_k : x_i \neq x_j \forall i,j ; x_i \in N \forall i}$. A useful fact of power sets is that they can be decomposed as the disjoint union of sets:
+We primarily focus on directed, weighted hypergraphs $H$ in which we take a node set $N$ and construct a set of hyperedges, also denoted $E$ as in the case for graphs, where a single hyperedge is defined as $e = (\alpha_e \subseteq N, \beta_e \subseteq N, w_e)$, which is the same as for graphs except that the head and tail are now subsets of $N$ as opposed to single elements. We will use $\alpha(e)$ to denote the head/input subset of a hyperedge and $\beta(e)$ to denote the tail/output subset. 
+
+One of the most useful areas of graph theory research has been the viewpoint that graphs can be represented as linear operators on an associated vector space. This vector space is straightforwardly constructed by assigning a single basis element to each element $n_i \in N$, for simplicity we use Dirac notation to indicate vectors $\ket{n_i}$ as opposed to arrows $\vec{n_i}$. Note that a ket may not be a normalized quantum state, but any arbitrary vector. Studying the properties of linear operators related to graphs is called spectral graph theory, and has led to many important findings of theoretic and practical significance. 
+
+To study linear operators related to hypergraphs we will need to construct a slightly more intricate vector space. To start, we note the following useful property of the power set 
 \begin{equation}
-    2^N = \disjointUnion_{k = 0}^{|N|} N_k = \bigoplus_{k=0}^{k = |N|} N_k = \bigcup_{k=0}^{|N|} N_k,
+    2^N =  \bigcup_{k=0}^{|N|} N_k = \bigoplus_{k=0}^{k = |N|} N_k,
 \end{equation}
-where we can view the disjoint union as the coproduct construction in the category of sets.
+where $N_k := \set{X \subseteq N : |X| = k}$ is the set of subsets of $N$ of cardinality $k$ and we use $\bigoplus$ to denote the disjoint union, or coproduct, when working in the category Set. Given this set $2^N$ we can now construct a new vector space by simply assigning each element $s_i \in 2^N$ a basis vector $\ket{s_i}$. We use $s_i$ to denote a single indexed subset of $N$. 
 
-Our goal is to turn $2^N$ into a vector space. We do this by first considering a field $\field_N$ and then taking it's free module (free vector space?). Let $V$ be the free module of $2^N$ and $V_k$ the free module of $N_k$. 
-\begin{claim}
+\begin{defn}[Hyperspace]
+    Let $F$ denote the free module action and $N = \set{n_i}_{i=1}^n$. We call the vector space $V = \bigoplus_{k=0}^n V_k = F(2^N) = F(\bigoplus_{k=0}^n N_k) = \bigoplus_{k=0}^n F(N_k)$ associated with a hypergraph the associated hyperspace. A hyperspace $V$ comes with projectors $\Pi_k : V \to V_k$ and inclusions $\eta_k : V_k \to V$. We denote the natural basis $\ket{s_i}$, where each $s_i \subset N$ is an indexed subset of $N$ the subset basis of the hyperspace. This basis allows for a function $\cardi{\ket{\set{n_1}}} = 1$ which gives the cardinality of the underlying set. We denote the useful combination $\widetilde{\Pi}_k = \eta \circ \Pi_k : V \to V$ which acts as
+    \begin{equation}
+        \widetilde{\Pi_k} \ket{s_i} = \begin{cases}
+            0 & \text{if } s_i \notin N_k \\
+            \ket{s_i} & \text{if } s_i \in N_k 
+        \end{cases}
+    \end{equation}
+\end{defn}
+
+We now can define the adjacency matrix for the hypergraph
 \begin{equation}
-        V = \bigoplus_{k=0}^{|N|} V_k.
+    A_H = \sum_{i=1}^{2^n} \sum_{j=1}^{2^n} w_{i,j} \ketbra{s_i}{s_j},
 \end{equation}
-\end{claim}
-The proof of this claim isn't really done. This construction is nice as it automatically gives us for free the inclusion maps $i_k : V_k \to V$ and projectors $\Pi_k : V \to V_k$ due to the fact that coproducts and products coincide in the category of $\field$-modules. $V$ being a vector space means we can take elements of the field $c \in \field$ 
+which is very standard (is that even useful?). We can study probabilistic processes or quantum systems modeled by hypergraphs by restricting our attention to isometric adjacency matrices, either $L_1, L_2, \ldots$. 
+Similarly a laplacian $L_H = D - A$, where $D$ is the "degree" of each basis vector defined in the usual graph theoretic sense, is straightforward to define and is a positive semi-definite operator. 
 
+Now that we have seen how hypergraphs can be represented as adjacency matrices on an exponentially larger space, we are led to the following question: If matrices can be represented as weighted directed graphs, what is the difference between a hypergraph on a set of size $n$ and a weighted, directed graph on a space of size $2^n$? To isolate the differences we will utilize the complete hypergraph on $N$ and a complete graph on $2^N$, without the knowledge that the set $2^N$ is a power set. 
+
+Let $H_C$ denote the complete hypergraph and $G_C$ the respective complete graph. To isolate differences we will use the concept of cardinality of the basis vectors. Define the random variable $\card(.)$ as follows
+\begin{align}
+    \card(\ket{\set{}}) &= 0 \\
+    \card(\ket{\set{n_1}}) &= 1 \\
+    \expect{\cardi{\frac{1}{2} \ket{\set{n_1, n_2}} + \frac{1}{2} \ket{\set{}} }} &= 1 \\
+    \prob{\cardi{\sum_{i} c_i \ket{s_i}} = k } & \coloneqq \frac{\sum_{i,j} c_i \bra{s_j} \Pi_k \ket{s_i}}{ \sum_i c_i}.
+\end{align}
+We now look at the complete graph and hypergraphs. Let $\ket{e} = \frac{1}{\sqrt{2^n}} \sum_{i=1}^{2^n} \ket{s_i}$ denote the $L_2$ normalized all ones vector in the subset basis. The walk operator, or adjacency operator, for the complete hypergraph is then simply $H_C = \ketbra{e}{e}$, or the all ones matrix properly normalized. As a hypergraph we have access to the $\card$ operator, which allows us to compute the cardinality distribution of the dominant eigenvector of $H_C$ as
+\begin{align}
+    \cardi{H, k} := \prob{\cardi{\ket{e}} = k } = \frac{\binom{n}{k}}{2^n}.
+\end{align}
+We can generalize this notion to an arbitrary stochastic hypergraph $H$  by replacing $\ket{e} \mapsto \lim_{m \to \infty} \int H^m \ket{\psi} ~d\ket{\psi} $, which is simply a method of obtaining the dominant eigenvectors.
+
+For the complete hypergraph we note that we can easily compute quantities such as the expected cardinality and the entropy
+\begin{align}
+    \expect{\cardi{H, k}} &= \frac{n}{2} \\
+    \mathbf{H} \brackets{\cardi{H, k}} &= \\
+\end{align}
+
+
+
+
+
+\begin{figure}
+    \begin{tikzpicture}
+        \node (n1) at (0,0) {};
+        \node (n2) at (1,1) {};
+        \node (n3) at (2,0) {};
+        \node (n4) at (3, 3) {};
+        \node (n5) at (4, 2) {};
+        \foreach \v in {1,2,3,4,5} {
+            \fill (n\v) circle (0.1);
+        }
+    \end{tikzpicture}
+    \caption[Hypergraph]{An example of a directed, weighted hypergraph with a single edge $e$}
+\end{figure}
+
+
+
+\section{Algebraic Construction}
 Now that we have a vector space, we can define a hyperedge $e$ simply as a linear map on this overall vector space, or in other words as a $\field$-module endomorphism
 \begin{equation}
     e \in \Hom_{\field} (V, V).

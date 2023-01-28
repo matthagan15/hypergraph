@@ -1,0 +1,6 @@
+digraph G {
+    n1 [ style = filled, color = pink]
+    n2 [ style = filled, color = pink]
+    n3 [ style = filled, color = pink]
+    
+}
