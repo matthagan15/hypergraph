@@ -89,11 +89,15 @@
 % \tableofcontents
 
 \section{Introduction}
-Hypergraphs are generally viewed as a generalization of graphs, so we first need to define graphs. A graph $G$ is typically viewed as two sets $G = (N, E)$, one set $N = \set{n_i}_{i=1}^n$ of nodes ($V$ is reserved for vector spaces later) and one set of edges $E = \set{(n_a, n_b, w_{a,b})}$, where $n_a$ represents the head node and $n_b$ the tail, if this edge is directed, and $w_{a,b} \in \field$ the weight. The field $\field$ is left arbitrary for now, all we require is that the edge weights be in a field so we can construct vector spaces later.
+Before a spectral theory of hypergraphs can be defined, a decent notion of spectral graph theory is good to have in mind. A graph $G$ is typically viewed as two sets $G = (N, E)$, one set $N = \set{n_i}_{i=1}^n$ of nodes ($V$ is reserved for vector spaces later) and one set of edges $E = \set{(n_a, n_b, w_{a,b})}$, where $n_a$ represents the head node and $n_b$ the tail, if this edge is directed, and $w_{a,b} \in \field$ the weight. The field $\field$ is left arbitrary for now, all we require is that the edge weights be in a field so we can construct vector spaces later.
 
-We primarily focus on directed, weighted hypergraphs $H$ in which we take a node set $N$ and construct a set of hyperedges, also denoted $E$ as in the case for graphs, where a single hyperedge is defined as $e = (\alpha_e \subseteq N, \beta_e \subseteq N, w_e)$, which is the same as for graphs except that the head and tail are now subsets of $N$ as opposed to single elements. We will use $\alpha(e)$ to denote the head/input subset of a hyperedge and $\beta(e)$ to denote the tail/output subset. 
+We primarily focus on directed, weighted hypergraphs $H$ in which we take a node set $N$ and construct a set of hyperedges, also denoted $E$ as in the case for graphs, where a single hyperedge is defined as , which is the same as for graphs except that the head and tail are now subsets of $N$ as opposed to single elements. We will use $\alpha(e)$ to denote the head/input subset of a hyperedge and $\beta(e)$ to denote the tail/output subset. 
 
-One of the most useful areas of graph theory research has been the viewpoint that graphs can be represented as linear operators on an associated vector space. This vector space is straightforwardly constructed by assigning a single basis element to each element $n_i \in N$, for simplicity we use Dirac notation to indicate vectors $\ket{n_i}$ as opposed to arrows $\vec{n_i}$. Note that a ket may not be a normalized quantum state, but any arbitrary vector. Studying the properties of linear operators related to graphs is called spectral graph theory, and has led to many important findings of theoretic and practical significance. 
+The study of the eigenvalues of linear operators associated to graphs, such as walk operators $W$, Adjacency matrices $A$, or Laplacians $L$, is known as spectral graph theory. This vector space is straightforwardly constructed by assigning a single basis element to each element $n_i \in N$, which can be thought of as a free module $F(N)$. We use Dirac notation to indicate vectors $\ket{n_i}$ as opposed to arrows $\vec{n_i}$. 
+
+maybe talk about applications of spectral graph theory?
+
+Hypergraphs are a direct generalization of a graph. They are defined as a tuple $(N, E)$ of nodes $N$ and hyperedges $E$. We will use directed, weighted hyperedges defined as a tuple $e = (\alpha(e) \subseteq N, \beta_e \subseteq N, w_e)$, where $\alpha(e)$ represents the input subset, $\beta(e)$ the tail, and $w_e$ the edge weight. From this we can index the power set $2^N$ which gives us access to a good basis for the hypergraph vector space. 
 
 To study linear operators related to hypergraphs we will need to construct a slightly more intricate vector space. To start, we note the following useful property of the power set 
 \begin{equation}
@@ -129,18 +133,37 @@ Let $H_C$ denote the complete hypergraph and $G_C$ the respective complete graph
 \end{align}
 We now look at the complete graph and hypergraphs. Let $\ket{e} = \frac{1}{\sqrt{2^n}} \sum_{i=1}^{2^n} \ket{s_i}$ denote the $L_2$ normalized all ones vector in the subset basis. The walk operator, or adjacency operator, for the complete hypergraph is then simply $H_C = \ketbra{e}{e}$, or the all ones matrix properly normalized. As a hypergraph we have access to the $\card$ operator, which allows us to compute the cardinality distribution of the dominant eigenvector of $H_C$ as
 \begin{align}
-    \cardi{H, k} := \prob{\cardi{\ket{e}} = k } = \frac{\binom{n}{k}}{2^n}.
+    \cardi{H_C(n), k} := \prob{\cardi{\ket{e}} = k } = \frac{\binom{n}{k}}{2^n}.
 \end{align}
 We can generalize this notion to an arbitrary stochastic hypergraph $H$  by replacing $\ket{e} \mapsto \lim_{m \to \infty} \int H^m \ket{\psi} ~d\ket{\psi} $, which is simply a method of obtaining the dominant eigenvectors.
+
+\begin{theorem}[Stirling's]
+    \begin{equation}
+        n! = (1 + o(1)) \sqrt{2 \pi n} n^n e^{-n}
+    \end{equation}
+    \begin{proof}
+    \begin{align}
+        n! &= \int_0^\infty t^n e^{-t} dt \\
+        &= \int_0^\infty (s+n)^{n} e^{-(s+n)} ds \\
+        &= n^n e^{-n} \int_0^\infty \parens{ 1 + \frac{s}{n}}^{n} e^{-s)} ds \\
+        &= n^n e^{-n + n \log n} \int_0^\infty e^{n \log \parens{1 + \frac{s}{n}} - s} ds \\
+        &= n^n e^{-n + n \log n} \int_0^\infty e^{n \log \parens{1 + \frac{s}{n}} - s} ds \\
+        &= \int_0^\infty t^n e^{-t} dt 
+    \end{align}
+\end{proof}
+\end{theorem}
+
+\begin{align}
+    \binom{n}{k} &= \frac{n!}{(n-k)! k!} \\
+    &= \frac{(1 + o(1))\sqrt{2 \pi n} n^n e^{-n}}{(1+o(1)) 2 \pi \sqrt{n (n-k)} k^k (n-k)^{n-k} e^{-n}} \\
+    &= \frac{1 + o(1)}{\sqrt{2 \pi}(1+o(1))} \frac{n^n}{ k^k (n-k)^{n-k + 1/2}}
+\end{align}
 
 For the complete hypergraph we note that we can easily compute quantities such as the expected cardinality and the entropy
 \begin{align}
     \expect{\cardi{H, k}} &= \frac{n}{2} \\
-    \mathbf{H} \brackets{\cardi{H, k}} &= \\
+    \mathbf{H} \brackets{\cardi{H, k}} &= - \sum_{k=0}^{n} \frac{\binom{n}{k}}{2^n} \log \parens{\frac{\binom{n}{k}}{2^n}}\\
 \end{align}
-
-
-
 
 
 \begin{figure}
@@ -155,8 +178,13 @@ For the complete hypergraph we note that we can easily compute quantities such a
         }
     \end{tikzpicture}
     \caption[Hypergraph]{An example of a directed, weighted hypergraph with a single edge $e$}
+
+
 \end{figure}
 
+\begin{defn}[Expected Cardinality]
+    Given query access to hypergraph $H$ that is an $L_1$ isometry, output $1$ if the quantity $\expect{\cardi{H,k}} \geq \frac{n}{2}$.
+\end{defn}
 
 
 \section{Algebraic Construction}
