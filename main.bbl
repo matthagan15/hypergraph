@@ -1,0 +1,87 @@
+\begin{thebibliography}{10}
+
+\bibitem{hgRecSystems}
+Shulong Tan, Jiajun Bu, C.~Chen, and Xiaofei He.
+\newblock Using rich social media information for music recommendation via
+  hypergraph model.
+\newblock {\em ACM Transactions on Multimedia Computing Communications and
+  Applications}, 7:213--237, 10 2011.
+
+\bibitem{databases}
+Edward~PF Chan and H{\'e}ctor~J Hern{\'a}ndez.
+\newblock On the desirability of $\gamma$-acyclic bcnf database schemes.
+\newblock {\em Theoretical Computer Science}, 62(1-2):67--104, 1986.
+
+\bibitem{bioinformatics}
+Rob Patro and Carl Kingsford.
+\newblock {Predicting protein interactions via parsimonious network history
+  inference}.
+\newblock {\em Bioinformatics}, 29(13):i237--i246, 06 2013.
+
+\bibitem{Brazil2015}
+Marcus Brazil and Martin Zachariasen.
+\newblock Steiner trees in graphs and hypergraphs.
+\newblock pages 301--317, 2015.
+
+\bibitem{3cnf}
+Uriel Feige, Jeong~Han Kim, and Eran Ofek.
+\newblock Witnesses for non-satisfiability of dense random 3cnf formulas.
+\newblock pages 497--508, 2006.
+
+\bibitem{xkcd}
+Randall Munroe.
+\newblock ``standards".
+\newblock {\em xkcd}, 927.
+
+\bibitem{sinanPNNL}
+Sinan~G. Aksoy, Cliff Joslyn, Carlos~Ortiz Marrero, Brenda Praggastis, and
+  Emilie Purvine.
+\newblock Hypernetwork science via high-order hypergraph walks, 2019.
+
+\bibitem{lawler_cutsets_1973}
+E.~L. Lawler.
+\newblock Cutsets and partitions of hypergraphs.
+\newblock {\em Networks}, 3(3):275--285, 1973.
+
+\bibitem{veldt_hypergraph_2020}
+Nate Veldt, Austin~R. Benson, and Jon Kleinberg.
+\newblock Hypergraph {Cuts} with {General} {Splitting} {Functions}, January
+  2020.
+\newblock arXiv:2001.02817 [cs].
+
+\bibitem{rafaellaCheeger}
+Raffaella Mulas.
+\newblock A cheeger cut for uniform hypergraphs.
+\newblock {\em Graphs and Combinatorics}, 37(6):2265--2286, jun 2021.
+
+\bibitem{ageev_approximation_nodate}
+Alexander~A Ageev and Maxim~I Sviridenko.
+\newblock An {Approximation} {Algorithm} for {Hypergraph} {Max} k-{Cut} with
+  {Given} {Sizes} of {Parts}.
+
+\bibitem{conlon_hypergraph_2019}
+David Conlon, Jacob Fox, Matthew Kwan, and Benny Sudakov.
+\newblock Hypergraph cuts above the average.
+\newblock {\em Israel Journal of Mathematics}, 233(1):67--111, August 2019.
+
+\bibitem{rough_spectral_tensors}
+Liqun Qi.
+\newblock The spectral theory of tensors (rough version), 2012.
+
+\bibitem{sinan_random_walks_laplacians_clustering}
+Koby Hayashi, Sinan~G. Aksoy, Cheong~Hee Park, and Haesun Park.
+\newblock Hypergraph random walks, laplacians, and clustering, 2020.
+
+\bibitem{jost_hypergraph_2018}
+Jürgen Jost and Raffaella Mulas.
+\newblock Hypergraph {Laplace} {Operators} for {Chemical} {Reaction}
+  {Networks}, July 2018.
+\newblock arXiv:1804.01474 [math].
+
+\bibitem{mulas_random_2021}
+Raffaella Mulas, Christian Kuehn, Tobias Böhle, and Jürgen Jost.
+\newblock Random walks and {Laplacians} on hypergraphs: {When} do they match?,
+  June 2021.
+\newblock arXiv:2106.11663 [math].
+
+\end{thebibliography}

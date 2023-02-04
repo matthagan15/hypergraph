@@ -198,17 +198,44 @@ We now define quantum walks over a given hypergraph. First define the $L_2$ out-
 \begin{equation}
 \deg_2(s_i) \coloneqq \sum_{s_j \in 2^N} \abs{\dual{j} A_H \base{i}}^2,
 \end{equation}
-where we remind the reader edge weights are complex. We use these degrees to define the matrix
+where we remind the reader edge weights are complex. We use these degrees to define the quantum degree matrix
 \begin{equation}
-    Q_H \coloneqq \sum_{s_i \in 2^N} \deg_2(s_i) \base{i} \dual{i}
+    Q_H \coloneqq \sum_{s_i \in 2^N} \deg_2(s_i) \base{i} \dual{i}.
+\end{equation}
+This allows us to define the unitary quantum walk matrix
+\begin{equation}
+    \dual{i} U_H \base{j} \coloneqq \begin{cases}
+        \frac{\dual{i} A_H \base{j}}{\sqrt{\deg_2(s_i)}} & \deg_2(s_i) > 0 \\
+        \delta_{i,j} & \deg_2(s_i) = 0 .
+    \end{cases} 
+\end{equation}
+We provide a brief proof that this matrix is an $L_2$ isometry and therefore unitary
+\begin{equation}
+    fsad
 \end{equation}
 
+\begin{figure}
+    \begin{tikzpicture}
+        \node (n1) at (0,0) {};
+        \node (n2) at (1,1) {};
+        \node (n3) at (2,0) {};
+        \node (n4) at (2.5, 2.5) {};
+        \node (n5) at (3.5, 1.5) {};
+        \foreach \v in {1,2,3,4,5} {
+            \fill (n\v) circle (0.1);
+        }
+    \end{tikzpicture}
+    \caption[Hypergraph]{An example of a directed, weighted hypergraph with a single edge $e$}
+\end{figure}
 
 
-which is very standard (is that even useful?). We can study probabilistic processes or quantum systems modeled by hypergraphs by restricting our attention to isometric adjacency matrices, either $L_1, L_2, \ldots$. 
-Similarly a laplacian $L_H = D - A$, where $D$ is the ``degree" of each basis vector defined in the usual graph theoretic sense, is straightforward to define and is a positive semi-definite operator. 
 
-Now that we have seen how hypergraphs can be represented as adjacency matrices on an exponentially larger space, we are led to the following question: If matrices can be represented as weighted directed graphs, what is the difference between a hypergraph on a set of size $n$ and a weighted, directed graph on a space of size $2^n$? To isolate the differences we will utilize the complete hypergraph on $N$ and a complete graph on $2^N$, without the knowledge that the set $2^N$ is a power set. 
+\section{Cardinality} \label{sec:cardinality}
+This section should introduce cardinality and explore some useful quantities.
+
+\begin{defn}[Expected Cardinality]
+    Given query access to hypergraph $H$ that is an $L_1$ isometry, output $1$ if the quantity $\expect{\cardi{H,k}} \geq \frac{n}{2}$.
+\end{defn}
 
 Let $H_C$ denote the complete hypergraph and $G_C$ the respective complete graph. To isolate differences we will use the concept of cardinality of the basis vectors. Define the random variable $\card(.)$ as follows
 \begin{align}
@@ -223,21 +250,6 @@ We now look at the complete graph and hypergraphs. Let $\ket{e} = \frac{1}{\sqrt
 \end{align}
 We can generalize this notion to an arbitrary stochastic hypergraph $H$  by replacing $\ket{e} \mapsto \lim_{m \to \infty} \int H^m \ket{\psi} ~d\ket{\psi} $, which is simply a method of obtaining the dominant eigenvectors.
 
-\begin{theorem}[Stirling's]
-    \begin{equation}
-        n! = (1 + o(1)) \sqrt{2 \pi n} n^n e^{-n}
-    \end{equation}
-    \begin{proof}
-    \begin{align}
-        n! &= \int_0^\infty t^n e^{-t} dt \\
-        &= \int_0^\infty (s+n)^{n} e^{-(s+n)} ds \\
-        &= n^n e^{-n} \int_0^\infty \parens{ 1 + \frac{s}{n}}^{n} e^{-s)} ds \\
-        &= n^n e^{-n + n \log n} \int_0^\infty e^{n \log \parens{1 + \frac{s}{n}} - s} ds \\
-        &= n^n e^{-n + n \log n} \int_0^\infty e^{n \log \parens{1 + \frac{s}{n}} - s} ds \\
-        &= \int_0^\infty t^n e^{-t} dt 
-    \end{align}
-\end{proof}
-\end{theorem}
 
 \begin{align}
     \binom{n}{k} &= \frac{n!}{(n-k)! k!} \\
@@ -250,30 +262,6 @@ For the complete hypergraph we note that we can easily compute quantities such a
     \expect{\cardi{H, k}} &= \frac{n}{2} \\
     \mathbf{H} \brackets{\cardi{H, k}} &= - \sum_{k=0}^{n} \frac{\binom{n}{k}}{2^n} \log \parens{\frac{\binom{n}{k}}{2^n}}\\
 \end{align}
-
-
-\begin{figure}
-    \begin{tikzpicture}
-        \node (n1) at (0,0) {};
-        \node (n2) at (1,1) {};
-        \node (n3) at (2,0) {};
-        \node (n4) at (3, 3) {};
-        \node (n5) at (4, 2) {};
-        \foreach \v in {1,2,3,4,5} {
-            \fill (n\v) circle (0.1);
-        }
-    \end{tikzpicture}
-    \caption[Hypergraph]{An example of a directed, weighted hypergraph with a single edge $e$}
-
-
-\end{figure}
-
-\begin{defn}[Expected Cardinality]
-    Given query access to hypergraph $H$ that is an $L_1$ isometry, output $1$ if the quantity $\expect{\cardi{H,k}} \geq \frac{n}{2}$.
-\end{defn}
-
-\section{Cardinality} \label{sec:cardinality}
-This section should introduce cardinality and explore some useful quantities.
 
 \section{Algorithms} \label{sec:algorithms}
 
@@ -300,7 +288,24 @@ where the ! means we used commutativity to get $(c *e) (s * v) = s * (c * e) (v)
 So we now have hyperedges defined as a specific linear map $e$ acting on a vector space $V$, and that we can add hyperedges and multiply them by some field. We then can simply define a hypergraph $h = \sum c_i e_i$, a weighted sum of hyperedges. Thats it! 
 
 
-\section{Discussion}
+\section{Scratch}
+
+\begin{theorem}[Stirling's]
+    \begin{equation}
+        n! = (1 + o(1)) \sqrt{2 \pi n} n^n e^{-n}
+    \end{equation}
+    \begin{proof}
+    \begin{align}
+        n! &= \int_0^\infty t^n e^{-t} dt \\
+        &= \int_0^\infty (s+n)^{n} e^{-(s+n)} ds \\
+        &= n^n e^{-n} \int_0^\infty \parens{ 1 + \frac{s}{n}}^{n} e^{-s)} ds \\
+        &= n^n e^{-n + n \log n} \int_0^\infty e^{n \log \parens{1 + \frac{s}{n}} - s} ds \\
+        &= n^n e^{-n + n \log n} \int_0^\infty e^{n \log \parens{1 + \frac{s}{n}} - s} ds \\
+        &= \int_0^\infty t^n e^{-t} dt 
+    \end{align}
+\end{proof}
+\end{theorem}
+
 A linear theory of hypergraph connections allows for immediate generalizations of many previous concepts. We posit a few conjectured areas that could lead to fruitful future research.
 \begin{itemize}
     \item There is a beautiful theorem by Sunada that states that a graph $G$ is an optimal expander, aka the graph is Ramanujan, if and only if it's Ihara zeta function satisfies a Graph variant of the Riemann Hypothesis. Our theory now allows for these questions to be generalized to the hypergraph setting.
