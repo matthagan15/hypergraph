@@ -152,7 +152,7 @@ To study linear operators related to hypergraphs we will need to construct a sli
 \begin{equation}
     2^N =  \bigcup_{k=0}^{|N|} N_k = \bigoplus_{k=0}^{k = |N|} N_k,
 \end{equation}
-where $N_k := \set{X \subseteq N : |X| = k}$ is the set of subsets of $N$ of cardinality $k$ and we use $\bigoplus$ to denote the disjoint union, or coproduct, when working in the category Set. We will use $s_i$ to denote a single indexed subset of $N$, so $2^N = \set{s_i}_{i=1}^{2^n}$. Given this, we now introduce the main vector space of this paper.
+where $N_k := \set{X \subseteq N : |X| = k}$ is the set of subsets of $N$ of cardinality $k$ and we use $\bigoplus$ to denote the disjoint union, or coproduct, when working in the category Set. We will use $s_i$ to denote a single arbitrarily indexed subset of $N$, so $2^N = \set{s_i}_{i=1}^{2^n}$. Given this, we now introduce the main vector space of this paper.
 
 \begin{defn}[Hyperspace]
     Let $F$ denote the free module action and $N = \set{n_i}_{i=1}^n$. We call the vector space $$V \coloneqq F \parens{2^N} = F \parens{\bigoplus_{k=0}^n N_k} = \bigoplus_{k=0}^n F(N_k) = \bigoplus_{k=0}^n V_k $$ associated with a hypergraph the hyperspace. A hyperspace $V$ comes with projectors $\Pi_k : V \to V_k$ and inclusions $\iota_k : V_k \to V$. We denote the useful combination $\fullProj_k \coloneqq \iota_k \circ \Pi_k : V \to V$ which acts as
@@ -194,36 +194,53 @@ We briefly show that this is a stochastic matrix, starting with subsets $s_i$ th
 \end{align}
 The case where $\deg(s_j) = 0$ is trivial. Note that this can be expressed as $W_H = A_H D_H^{+}$, where we remind the reader $M^+$ denotes the pseudo-inverse.
 
-We now define quantum walks over a given hypergraph. First define the $L_2$ out-degree as 
+We now investigate quantum walks over a given hypergraph. Unfortunately the situation is not as straightforward as the random walk case, where we can simply reweight all outgoing edges from a subset by that subset's out-degree. This can't be replicated for quantum walks as the unitary matrix must be of full rank, which is not guaranteed for any arbitrary adjacency matrix of a hypergraph. Moreover, the procedure of adding self-loops to subsets that do not have outgoing edges does not solve the rank issue.
+
+For quantum walks we have to add a node and expand our vector space. We construct the Hermitian matrix $\widetilde{A}_H \coloneqq A \otimes \base{0}\dual{0} + A^* \otimes \base{1} \dual{1}$. Then to construct the unitary we take $U_H = e^{i\widetilde{A}_H}$. Unfortunately this construction essentially makes the adjacency matrix ``non-local'', as it takes the sum of all possible powers of the adjacency matrix which spreads a walker from a single subset over all possible subsets it could be connected to. This process is rather cumbersome so we will instead study unitary adjacency matrices, denoted $U_H$ as opposed to constructed unitary matrices from given hypergraphs.
+
+The last matrix to consider for hypergraphs is the Laplacian $L_H$. We will simply port the definitions from graphs over
 \begin{equation}
-\deg_2(s_i) \coloneqq \sum_{s_j \in 2^N} \abs{\dual{j} A_H \base{i}}^2,
+    L_H \coloneqq D_H - A_H, \quad \mathcal{L}_H \coloneqq D_H^{+1/2} L_H D_H^{+1/2}.
 \end{equation}
-where we remind the reader edge weights are complex. We use these degrees to define the quantum degree matrix
-\begin{equation}
-    Q_H \coloneqq \sum_{s_i \in 2^N} \deg_2(s_i) \base{i} \dual{i}.
-\end{equation}
-This allows us to define the unitary quantum walk matrix
-\begin{equation}
-    \dual{i} U_H \base{j} \coloneqq \begin{cases}
-        \frac{\dual{i} A_H \base{j}}{\sqrt{\deg_2(s_i)}} & \deg_2(s_i) > 0 \\
-        \delta_{i,j} & \deg_2(s_i) = 0 .
-    \end{cases} 
-\end{equation}
-We provide a brief proof that this matrix is an $L_2$ isometry and therefore unitary
-\begin{equation}
-    fsad
-\end{equation}
+We make note of a few properties of this matrix:
+\begin{itemize}
+    \item PSD?
+    \item Stochastic?
+    \item Diff Eq solution?
+    \item IDK?
+\end{itemize}
+Once these properties are filled in then this section should be good to go I think.
 
 \begin{figure}
+    \centering
     \begin{tikzpicture}
         \node (n1) at (0,0) {};
         \node (n2) at (1,1) {};
         \node (n3) at (2,0) {};
         \node (n4) at (2.5, 2.5) {};
         \node (n5) at (3.5, 1.5) {};
+        \node (e1) at (1,0.5) {};
+        \node (e2) at (3, 2) {};
+
+        \begin{scope}[fill opacity=0.8]
+            \filldraw[fill=red!70] ($(n1)+(-0.5,0)$) 
+                to[out=90,in=180] ($(n2) + (0,0.5)$) 
+                to[out=0,in=90] ($(n3) + (0.5,0)$)
+                to[out=270, in=0] (1, -0.5)
+                to[out=180, in=270] ($(n1) + (-0.5, 0)$);
+            \filldraw[fill=yellow!70]
+            ($(n4) + (0, 0.5)$)
+            to[in=180, out=90] ($(n5) + (0.5, 0)$)
+            to[in=90, out=0] ($(n5) + (0, -0.5)$)
+            to[in=0, out=270] ($(n4) + (-0.5, 0)$)
+            to[in=270, out=180] ($(n4) + (0, 0.5)$);
+        \end{scope}
+
         \foreach \v in {1,2,3,4,5} {
             \fill (n\v) circle (0.1);
         }
+        % [line width=1pt, double distance=3pt,
+        %      arrows = {-Latex[length=0pt 3 0]}] $(e1)$ -- $(e2)$;
     \end{tikzpicture}
     \caption[Hypergraph]{An example of a directed, weighted hypergraph with a single edge $e$}
 \end{figure}
@@ -231,20 +248,67 @@ We provide a brief proof that this matrix is an $L_2$ isometry and therefore uni
 
 
 \section{Cardinality} \label{sec:cardinality}
-This section should introduce cardinality and explore some useful quantities.
+We now introduce the main quantity relevant for our study of hypergraphs action on vectors, what we have termed ``cardinality''. We will define a random variable $\card$ for a given vector in hyperspace and show different ways to extract this quantity from a given hypergraph. Then we will define a cardinality matrix $C$ from a given hypergraph and define the cardinality scrambling for a hypergraph. 
 
-\begin{defn}[Expected Cardinality]
-    Given query access to hypergraph $H$ that is an $L_1$ isometry, output $1$ if the quantity $\expect{\cardi{H,k}} \geq \frac{n}{2}$.
+\subsection{Vector Cardinality}
+\begin{defn}[Vector Cardinality]
+    Define the random variable $\cardi{\ket{\psi}}$, which is supported over the set $\set{0, 1, 2, \ldots, n}$ to have the following distribution:
+    \begin{equation}
+        \prob{\cardi{\ket{\psi}} = k} \coloneqq \frac{\sum_{i} \abs{\dual{i} \fullProj_k \ket{\psi} }}{\sum_j \abs{\braket{s_j}{\psi}}}.
+    \end{equation}
+\end{defn}
+Is this a distribution? I think so
+\begin{align}
+    \sum_i |\dual{i} \fullProj_k \ket{\psi} | &= \sum_{s_i \in N_k} \abs{\braket{s_i}{\psi}}.
+\end{align}
+We then have
+\begin{equation}
+    \sum_j \abs{\braket{s_j}{\psi}} = \sum_{k=0}^n \sum_{s_i \in N_k} \abs{\braket{s_i}{\psi}}.
+\end{equation}
+Therefore
+\begin{align}
+    \sum_{k=0}^n \prob{\cardi{\ket{\psi}} = k} &= \sum_{k=0}^n \frac{\sum_{i} \abs{\dual{i} \fullProj_k \ket{\psi} }}{\sum_j \abs{\braket{s_j}{\psi}}} \\
+    &= \frac{\sum_{k=0}^n \sum_{s_i \in N_k} \abs{\braket{s_i}{\psi}} }{\sum_{k=0}^n \sum_{s_i \in N_k} \abs{\braket{s_i}{\psi}}} \\
+    &= 1.
+\end{align}
+Given the presence of $\ket{\psi}$ in the denominator $\frac{1}{\sum_i \abs{\braket{s_i}{\psi}}}$ in the definition of $\card$ we note that this quantity is not defined for the zero vector. 
+
+Given a vector $\ket{\psi}$ one could also define a cardinality quantum state by keeping phases coherent upon collapse to cardinality $k$. This would look like
+\begin{equation}
+    \card_Q\parens{\ket{\psi}} = \sum_{k=0}^n \frac{\sum_{s_i \in 2^N} \dual{i} \fullProj_k \ket{\psi}  }{\sqrt{\sum_{s_j \in 2^N} \abs{\braket{s_j}{\psi}}^2}} \ket{k}
+\end{equation}
+
+Now that we have a cardinality distribution for a given vector, we can now study the interaction of cardinality with hypergraphs.
+\begin{defn}[Average Cardinality]
+    Given a hypergraph $H$, let $W_H$ denote the unique column stochastic walk operator. As $W_H \ket{\psi}$ will never be a zero vector we can define the random variable
+    \begin{equation}
+        \gamma(H) \coloneqq \int \cardi{W_H \ket{\psi}} d\ket{\psi}.
+    \end{equation}
+\end{defn}
+From this definition we can also define the dominant cardinality for aperiodic, irreducible random walks:
+\begin{defn}[Dominant Cardinality]
+    Given a stochastic operator $W_H$ that is aperiodic, non-bipartite, and irreducible then $W_H$ satisfies the Peron-Frobenius theorem and has a unique dominant eigenvector with eigenvalue 1. This allows us to define the random variable
+    \begin{equation}
+        \Delta(W_H) \coloneqq \lim_{k \to \infty} \gamma(W_H^k).
+    \end{equation}
 \end{defn}
 
-Let $H_C$ denote the complete hypergraph and $G_C$ the respective complete graph. To isolate differences we will use the concept of cardinality of the basis vectors. Define the random variable $\card(.)$ as follows
-\begin{align}
-    \card(\ket{\set{}}) &= 0 \\
-    \card(\ket{\set{n_1}}) &= 1 \\
-    \expect{\cardi{\frac{1}{2} \ket{\set{n_1, n_2}} + \frac{1}{2} \ket{\set{}} }} &= 1 \\
-    \prob{\cardi{\sum_{i} c_i \ket{s_i}} = k } & \coloneqq \frac{\sum_{i,j} c_i \bra{s_j} \Pi_k \ket{s_i}}{ \sum_i c_i}.
-\end{align}
-We now look at the complete graph and hypergraphs. Let $\ket{e} = \frac{1}{\sqrt{2^n}} \sum_{i=1}^{2^n} \ket{s_i}$ denote the $L_2$ normalized all ones vector in the subset basis. The walk operator, or adjacency operator, for the complete hypergraph is then simply $H_C = \ketbra{e}{e}$, or the all ones matrix properly normalized. As a hypergraph we have access to the $\card$ operator, which allows us to compute the cardinality distribution of the dominant eigenvector of $H_C$ as
+\subsection{Cardinality Matrix}
+We now pivot to an alternative way to studying how a given hypergraph $H$ affects the cardinality of states in it's hyperspace. Our aim is to do so by studying properties of the matrix as opposed to it's action on all vectors over the hyperspace. Our goal is to show when these two notions offer equivalent insights into a hypergraphs behavior.
+
+\begin{defn}[Cardinality Matrix]
+    Given a hypergraph $H$ with adjacency matrix $A_H$, define the $(n+1) \times (n+1)$ matrix $C_H$ as
+    \begin{equation}
+        \bra{i} C_H \ket{j} \coloneqq \sum_{s_i \in N_i} \sum_{s_j \in N_j} \dual{i} A_H \base{j}.
+    \end{equation}
+\end{defn}
+Intuitively $C_H$ captures the edge weight in $H$ that transfers vectors of cardinality $j$ to cardinality $i$. 
+
+
+
+
+\subsection{Complete Graph vs. Complete Hypergraph}
+We now look at the complete graph $G_C$ over $2^N$ and compare it against the complete hypergraph $H_C$ over $N$. Let $\ket{e} = \frac{1}{\sqrt{2^n}} \sum_{i=1}^{2^n} \ket{s_i}$ denote the $L_2$ normalized all ones vector in the subset basis. The walk operator, or adjacency operator, for the complete hypergraph is then simply $H_C = \ketbra{e}{e}$, or the all ones matrix properly normalized. As a hypergraph we have access to the $\card$ operator, which allows us to compute the cardinality distribution of the dominant eigenvector of $H_C$ as
 \begin{align}
     \cardi{H_C(n), k} := \prob{\cardi{\ket{e}} = k } = \frac{\binom{n}{k}}{2^n}.
 \end{align}
