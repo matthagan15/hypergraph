@@ -303,12 +303,24 @@ First we define a new vector space of dimension $n+1$, where we simply have a ve
         \bra{i} C_H \ket{j} \coloneqq \sum_{s_i \in N_i} \sum_{s_j \in N_j} \dual{i} A_H \base{j}.
     \end{equation}
 \end{defn}
-Intuitively $C_H$ captures the edge weight in $H$ that transfers from subsets of cardinality $j$ to cardinality $i$. While this is a natural notion, it will serve useful to consider an averaged or normalized edge weight between cardinalities. For example, at cardinality $n/2$ there will simply be more weight due to the fact that there are more basis vectors for $V_{n/2}$ than any other cardinality. For this we define
+Intuitively $C_H$ captures the edge weight in $H$ that transfers from subsets of cardinality $j$ to cardinality $i$. While this is a natural notion, it will serve useful to consider an averaged or normalized edge weight between cardinalities. For example, at cardinality $n/2$ there will simply be more weight due to the fact that there are more basis vectors for $V_{n/2}$ than any other cardinality. For this we define the normalized cardinality matrix
 \begin{equation}
     \widetilde{C}_H \coloneqq \sum_{i,j} \ketbra{i}{j} \frac{\bra{i} C_H \ket{j}}{\binom{n}{i} \binom{n}{j}}.
 \end{equation}
 
-
+To show why the normalized cardinality matrix might be more useful than the un-normalized variant we look at the complete hypergraph again. We expect the complete hypergraph to be a maximal mixer of cardinalities, which is solely based on intuition. Let $K$ be the complete hypergraph on $n$ nodes. As there are $\binom{n}{i}$ subsets of cardinality $i$, between cardinalities $i$ and $j$ there are $\binom{n}{i} \binom{n}{j}$ possible hyperedges. This gives the cardinality matrix as
+\begin{equation}
+    C_K = \sum_{i,j} \ketbra{i}{j} \binom{n}{i} \binom{n}{j}.
+\end{equation}
+This can be easily seen as the outer product
+\begin{equation}
+    C_K = \parens{\sum_{i} \binom{n}{i} \ket{i}} \parens{\sum_{j} \binom{n}{j} \ket{j}}^\dagger.
+\end{equation}
+The properties that this matrix tells us about the underlying hypergraph $K$ is rather opaque. We can glean that $n/2$ seems to have the highest weight, both to and from. However this is to be expected as $n/2$ simply has the most possible subsets. If we look at the normalized variant, we get a different picture
+\begin{equation}
+    \widetilde{C}_K = \sum_{i,j} \ketbra{i}{j},
+\end{equation}
+which is simply the all ones matrix. This also is the adjacency matrix of the complete graph with self-loops over $n+1$ vertices. If we look at this object through the lens of spectral graph theory, we know that complete graphs are optimal expanders in a rigorous sense. This would suggest that the complete hypergraph is not only an optimal mixer among its basis vectors in hyperspace, but also among cardinalities in the node setting.
 
 
 
@@ -333,6 +345,14 @@ For the complete hypergraph we note that we can easily compute quantities such a
 \end{align}
 
 \section{Algorithms} \label{sec:algorithms}
+\subsection{Quantum}
+Consider hypergraph $H$ on $n$ nodes, we can represent the hyperspace $V_H$ with $n$ qubits using a simple binary encoding of mapping each the presence of each subset $s_i \in 2^N$ with a binary string. Let $s = \set{n_1, n_3} \subset N = \set{n_1, n_2, n_3} $. This subset is represented as the state vector $\ket{s} = \ket{101}$. A projection $\fullProj_k$ is a projection on to cardinality $k$ subsets which is equivalent to a $k$ Hamming weight projection. The quantum circuits for impementing these projections are straightforward and shown in Fig. \ref{fig:projection_circuits}.
+
+
+
+\begin{figure} \label{fig:projection_circuits}
+    
+\end{figure}
 
 \section{Algebraic Construction}
 Now that we have a vector space, we can define a hyperedge $e$ simply as a linear map on this overall vector space, or in other words as a $\field$-module endomorphism
