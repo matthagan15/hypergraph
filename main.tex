@@ -346,6 +346,13 @@ For the complete hypergraph we note that we can easily compute quantities such a
     \mathbf{H} \brackets{\cardi{H, k}} &= - \sum_{k=0}^{n} \frac{\binom{n}{k}}{2^n} \log \parens{\frac{\binom{n}{k}}{2^n}}\\
 \end{align}
 
+\section{Euler Characteristic} \label{sec:euler_characteristic}
+The Euler characteristic is best introduced in the setting in which it was developed, studying polyhedra. For a given surface $\Sigma$ in $\mathbb{R}^3$ the shape has vertices (nodes in the language of this paper), edges, and faces. We can look at a shape and count how many of these objects are present and give the following $\chi(\Sigma) = |N| - |E| + |F|$. This can be extended to modules and chain complexes that have homology groups as the alternating sum
+\begin{equation}
+    \chi(\Sigma) := \sum_{k = 0}^d \dim H_k(\Sigma),
+\end{equation}
+where $H_k(\Sigma)$ is the $k$\ts{th} homology group of the chain complex $\Sigma$.
+
 \section{Algorithms} \label{sec:algorithms}
 \subsection{Quantum}
 Consider hypergraph $H$ on $n$ nodes, we can represent the hyperspace $V_H$ with $n$ qubits using a simple binary encoding of mapping each the presence of each subset $s_i \in 2^N$ with a binary string. Let $s = \set{n_1, n_3} \subset N = \set{n_1, n_2, n_3} $. This subset could be represented as the state vector $\ket{s} = \ket{101}$. A projection $\fullProj_k$ is a projection on to cardinality $k$ subsets which is equivalent to a $k$ Hamming weight projection. The quantum circuits for impementing these projections are straightforward and shown in Fig. \ref{fig:projection_circuits}.
